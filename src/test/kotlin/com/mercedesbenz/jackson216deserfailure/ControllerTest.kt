@@ -1,5 +1,6 @@
 package com.mercedesbenz.jackson216deserfailure
 
+import com.mercedesbenz.jackson216deserfailure.Controller.PolymorphicType.A
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +25,21 @@ class ControllerTest(
         )
 
         assertThat(response.statusCode.value()).isEqualTo(200)
+        assertThat(response.body).isEqualTo(request)
+    }
+
+    @Test
+    fun `polymorphic should return successfully`() {
+        val request = A("Hello World")
+
+        val response = testRestTemplate.postForEntity(
+            "http://localhost:$port/polymorphic",
+            request,
+            Controller.PolymorphicType::class.java
+        )
+
+        assertThat(response.statusCode.value()).isEqualTo(200)
+        assertThat(response.body is A).isTrue
         assertThat(response.body).isEqualTo(request)
     }
 }
